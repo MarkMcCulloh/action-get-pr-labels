@@ -1,10 +1,10 @@
-const { GitHub, context } = require('@actions/github');
+const { getOctokit, context } = require('@actions/github');
 const core = require('@actions/core');
 
 async function run() {
   const token = core.getInput('github-token', { required: true });
   const sha = core.getInput('sha');
-  const octokit = GitHub.getOctokit(token)
+  const octokit = getOctokit(token)
 
   const result = await octokit.repos.listPullRequestsAssociatedWithCommit({
     owner: context.repo.owner,
