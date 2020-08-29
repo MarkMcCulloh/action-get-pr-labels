@@ -1,13 +1,21 @@
-name: 'Wait'
-description: 'Wait a designated number of milliseconds'
+name: 'Get Pull Request From SHA'
+description: 'Get Pull Request From SHA'
 inputs:
-  milliseconds:  # id of input
-    description: 'number of milliseconds to wait'
+  github-token:
+    description: 'GitHub Token'
     required: true
-    default: '1000'
+  sha:
+    required: false
+    description: 'Commit SHA'
 outputs:
-  time: # output will be available to future steps
-    description: 'The message to output'
+  title:
+    description: 'PR Title'
+  body:
+    description: 'PR Body'
+  number:
+    description: 'PR Number'
+  labels:
+    description: 'PR Labels'
 runs:
   using: 'node12'
   main: 'dist/index.js'

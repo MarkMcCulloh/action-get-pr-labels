@@ -1,21 +1,29 @@
+const { GitHub, context } = require('@actions/github');
 const core = require('@actions/core');
-const wait = require('./wait');
 
-
-// most @actions toolkit packages have async methods
 async function run() {
-  try {
-    const ms = core.getInput('milliseconds');
-    core.info(`Waiting ${ms} milliseconds ...`);
+  const token = core.getInput('github-token', { required: true });
+  const sha = core.getInput('sha');
+  const octokit = GitHub.getOctokit(token)
 
-    core.debug((new Date()).toTimeString()); // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
-    await wait(parseInt(ms));
-    core.info((new Date()).toTimeString());
+  const result = await octokit.repos.listPullRequestsAssociatedWithCommit({
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+    commit_sha: sha || context.sha,
+  });
+  const pr = result.data.length > 0 && result.data[0];
 
-    core.setOutput('time', new Date().toTimeString());
-  } catch (error) {
-    core.setFailed(error.message);
-  }
+  const { data: pullRequest } = await octokit.pulls.get({
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+    pull_number: pr.number
+  });
+
+  const labels = pullRequest.labels.map(label => label.name);
+  core.setOutput('labels', labels);
+  core.setOutput('number', pr.number);
+  core.setOutput('title', pr.title);
+  core.setOutput('body', pr.body);
 }
 
 run();
