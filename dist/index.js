@@ -5,13 +5,13 @@ require('./sourcemap-register.js');module.exports =
 /***/ 932:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
-const { GitHub, context } = __webpack_require__(438);
+const { getOctokit, context } = __webpack_require__(438);
 const core = __webpack_require__(186);
 
 async function run() {
   const token = core.getInput('github-token', { required: true });
   const sha = core.getInput('sha');
-  const octokit = GitHub.getOctokit(token)
+  const octokit = getOctokit(token)
 
   const result = await octokit.repos.listPullRequestsAssociatedWithCommit({
     owner: context.repo.owner,
